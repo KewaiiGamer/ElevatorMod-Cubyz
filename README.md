@@ -12,7 +12,7 @@ How to use:
 This process supports multiple mods in the same instance without making changes to code as long as each mod is done in their own mods/ subfolder
 
 
-*switching patching via [Wasm](https://github.com/OneAvargeCoder193/Cubyz/tree/wasm) will be done in the near future!*
+*switching to patching via [Wasm](https://github.com/OneAvargeCoder193/Cubyz/tree/wasm) may be considered in the future!*
 
 
 
