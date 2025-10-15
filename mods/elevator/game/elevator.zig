@@ -14,22 +14,13 @@ const Player = main.game.Player;
 pub var elevator: ?Block = null;
 
 pub const teleportCooldownConstant = 0.3;
-pub const ExtendedPlayer = struct {
-    base: Player,
-    teleportCooldown: f64 = 0,
-};
-pub var p: ?ExtendedPlayer = null;
+pub var teleportCooldown: f64 = 0;
+
 pub fn update(_: f64) void {}
 pub fn deinit(_: *main.game.World) void {}
 pub fn postDeinit(_: *main.game.World) void {}
-pub fn init(_: *main.game.World) void {
-    p = ExtendedPlayer{
-        .base = Player{},
-        .teleportCooldown = 0,
-    };
-}
+pub fn init(_: *main.game.World) void {}
 pub fn postInit(_: *main.game.World) void {
-    elevator = blocks.parseBlock("elevator:elevator");
 }
 
 pub fn findBlockBelowPlayer(pos: @Vector(3, f64)) ?Block {
@@ -64,8 +55,7 @@ fn tryTeleportPlayer(key: []const u8) bool {
     const player = main.game.Player;
     const world = main.server.world;
     if (world == null) return false;
-    if (p == null) return false;
-    if (p.?.teleportCooldown > 0) return false;
+    if (teleportCooldown > 0) return false;
     var pos = player.getPosBlocking();
     const block = findBlockBelowPlayer(pos);
     if (block == null) return false;
@@ -87,11 +77,14 @@ fn tryTeleportPlayer(key: []const u8) bool {
     pos[1] = @floor(pos[1]) + 0.5;
     pos[2] = nextElevatorZ.? + 1;
 
-    p.?.teleportCooldown = teleportCooldownConstant;
+    teleportCooldown = teleportCooldownConstant;
     player.setPosBlocking(pos);
     return true;
 }
 pub fn postUpdate(deltaTime: f64) void {
+    if (elevator == null) {
+        elevator = blocks.parseBlock("elevator:elevator");
+    }
     var jumped = false;
     var direction = "none";
     if (main.KeyBoard.key("jump").pressed) {
@@ -102,6 +95,6 @@ pub fn postUpdate(deltaTime: f64) void {
         jumped = tryTeleportPlayer("fall");
         direction = "fall";
     }
-    if (p != null) p.?.teleportCooldown -= deltaTime;
+    teleportCooldown -= deltaTime;
     return;
 }
